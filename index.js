@@ -71,7 +71,7 @@ function createRecord(){
       }).catch((err)=>{
          console.log(`Error ${err}`);
       })
-return `END your record added successfully`;
+return `your record added successfully`;
 }
 function updateRecord(){
    response = `END Your record is updated successfully`;
