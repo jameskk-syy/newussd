@@ -1,6 +1,8 @@
 // Import packages
 const express = require("express");
 const bodyParser =  require('body-parser');
+const firebaseApp = require('./config');
+const {getFirestore,collection} = require('firebase/firestore');
 const home = require("./routes/home");
 
 // Middlewares
@@ -8,6 +10,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.json());
+
+// establish  firestore  connection
+const fireStoreDb = getFirestore(app);
+
+//establish  collection connection
+
+const collectionRef = collection(fireStoreDb,"USSD");
+
 
 // Routes
 app.use("/home", home);
@@ -32,7 +42,7 @@ app.post('/ussd',(req,res)=>{
  else if(text == "1"){
     // check  first level 
     const accountNumber = "0796598108"
-    response = `END Your account number is ${accountNumber}`;
+    response = `END Your account number is ${accountNumber} and ${serviceCode}`;
  }
  else if(text == "2"){
     response = `CON What do  you like to  check  on  your account
