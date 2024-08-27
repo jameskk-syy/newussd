@@ -52,7 +52,10 @@ app.post('/ussd',async(req,res)=>{
  }
  else if(text == "3"){
    const result = await getRecord();
-   response = `END viewed ${result.length}`; 
+   result.map((result,index)=>{
+     response = `END ${index+1} \n ${result.firstName} \n ${result.lastName}
+     \n ${result.mobile}`; 
+   })
  }
  else if(text == "4"){
    response = `END deleted`; 
