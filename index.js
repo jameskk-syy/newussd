@@ -40,7 +40,8 @@ app.post('/ussd',async(req,res)=>{
     1 Create Record
     2 Update Record
     3 Read Record
-    4 Delete Account`;
+    4 Delete Account
+    5 Single Record`;
  }
  else if(text == "1"){
    //check  first level   
@@ -50,17 +51,33 @@ app.post('/ussd',async(req,res)=>{
  else if(text == "2"){
    response = `END updated`; 
  }
- else if(text == "3"){
-   const result = await getRecord();
+ else if(text == "3") {
+   const result = await getRecord(); // Fetch records from the database
+
    if (result.length > 0) {
-      response = "END Here are all the records:\n";
-   result.forEach((record, index) => {
-          response += `${index + 1}. ${record.firstName} ${record.lastName}\nPhone: ${record.mobile}\n\n`;
-      });
-  } else {
-      response = "END No records found.";
-  }
- }
+       response = "CON Here are all the records:\n";
+       result.forEach((record, index) => {
+           response += `${index + 1}. ${record.firstName} ${record.lastName}\nPhone: ${record.mobile}\n\n`;
+       });
+       response += "Enter the number of the item you want to bid on:";
+   } else {
+       response = "END No records found.";
+   }
+}
+else if(text.startsWith("3*")) {
+   const choice = text.split("*")[1]; // Extract the user's choice
+   const result = await getRecord(); // Fetch records again
+
+   if (choice && result[choice - 1]) {
+       const selectedItem = result[choice - 1];
+       // Save the selected item to Firestore with the phone number as the ID
+       const saveMessage = await saveSelectedItem(phoneNumber, selectedItem);
+       response = `END ${saveMessage}`;
+   } else {
+       response = "END Invalid choice.";
+   }
+}
+
  else if(text == "4"){
    response = `END deleted`; 
 
@@ -68,6 +85,16 @@ app.post('/ussd',async(req,res)=>{
  res.set('content-type:text/plain');
  res.send(response);
 });
+// Function to save the selected item to Firestore
+async function saveSelectedItem(phoneNumber, item) {
+   try {
+       const docRef = await setDoc(doc(collectionRef, phoneNumber), item);
+       return `You have successfully bid on ${item.firstName} ${item.lastName}.`;
+   } catch (err) {
+       console.error("Error saving item:", err);
+       return `Error saving bid: ${err.message}`;
+   }
+}
 async function createRecord(phoneNumber) {
    // Data to be added to Firestore
    const data = {
