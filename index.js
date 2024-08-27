@@ -37,43 +37,18 @@ app.post('/ussd',(req,res)=>{
  if(text == ""){
     response = `CON What do you  like to  check
     1 Create Record
-    2 Update Record`;
+    2 Update Record
+    3 Read Record
+    4 Delete Account`;
  }
  else if(text == "1"){
    //check  first level 
-   response = 'END your data created';
- }
- else if(text == "2"){
-   response = 'END your data updated';
+   data = createRecord();
+   
  }
  res.set('content-type:text/plain');
  res.send(response);
 });
-// function createRecord(){
-//    //we will add our data here
-//    const data = {
-//       firstName: "James",
-//       lastName:"Maina",
-//       mobile:phoneNumber,
-//       amount:"0.00"
-//    }
-//    addDoc(collectionRef,data).then((result) =>
-//       {console.log(`Your record is saved successfully with ID ${result.id}`);
-
-//       }).catch((err)=>{
-//          console.log(`Error ${err}`);
-//       })
-// return response = `END your record added successfully`;
-// }
-// function updateRecord(){
-//    response = `END Your record is updated successfully`;
-// }
-// function readRecord(){
- 
-// }
-// function deleteRecord(){
-//    response = `END Your record is deleted successfully`;
-// }
 
 // connection
 const port = process.env.PORT || 9001;
