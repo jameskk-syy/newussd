@@ -2,7 +2,7 @@
 const express = require("express");
 const bodyParser =  require('body-parser');
 const firebaseApp = require('./config');
-const {getFirestore,collection,addDoc,onSnapshot, getDocs} = require('firebase/firestore');
+const {getFirestore,collection,addDoc,onSnapshot, getDocs,setDoc, doc} = require('firebase/firestore');
 const home = require("./routes/home");
 const cors = require('cors');
 
@@ -78,11 +78,12 @@ async function createRecord(phoneNumber) {
    };
  
    try {
-     // Add document to Firestore collection
-     const docRef = await addDoc(collectionRef, data);
+     // Use the phone number as the document ID
+     const docRef = doc(collectionRef, phoneNumber);
+     await setDoc(docRef, data);
  
      // Return success message
-     return `Your record with phone number ${phoneNumber} added successfully with ID ${docRef.id}`;
+     return `Your record with phone number ${phoneNumber} added successfully.`;
    } catch (err) {
      // Log error and return failure message
      console.error("Error adding document:", err);
