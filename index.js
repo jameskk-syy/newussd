@@ -43,7 +43,7 @@ app.post('/ussd',(req,res)=>{
  }
  else if(text == "1"){
    //check  first level   
-   const data = createRecord();
+   const data = createRecord(phoneNumber);
    response = `END ${data}`; 
  }
  else if(text == "2"){
@@ -59,10 +59,18 @@ app.post('/ussd',(req,res)=>{
  res.set('content-type:text/plain');
  res.send(response);
 });
-function createRecord(){
+function createRecord(phoneNumber){
    //we will add our data here
-return response = ` your record added successfully`;
+
+return response = ` your record with phone number ${phoneNumber} added successfully`;
 }
+app.post('/create',(req,res)=>{
+  addDoc(collectionRef,req.body).then((result)=>{
+   res.status(200).json("data saved");
+  }).catch((err)=>{
+   res.status(500).json(err);
+  })
+})
 
 
 // connection
