@@ -37,9 +37,7 @@ app.post('/ussd',(req,res)=>{
  if(text == ""){
     response = `CON What do you  like to  check
     1 Create Record
-    2 Update Record
-    3 Read Record
-    4 Delete Account`;
+    2 Update Record`;
  }
  else if(text == "1"){
    //check  first level 
@@ -47,13 +45,6 @@ app.post('/ussd',(req,res)=>{
  }
  else if(text == "2"){
    response = 'END your data updated';
- }
- else if(text == "3"){
-   response = 'END your data retrieved';
- }
- else if(text == "4"){
-   response = 'END your data deleted';
-
  }
  res.set('content-type:text/plain');
  res.send(response);
