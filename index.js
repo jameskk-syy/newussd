@@ -2,7 +2,7 @@
 const express = require("express");
 const bodyParser =  require('body-parser');
 const firebaseApp = require('./config');
-const {getFirestore,collection,addDoc} = require('firebase/firestore');
+const {getFirestore,collection,addDoc,onSnapshot} = require('firebase/firestore');
 const home = require("./routes/home");
 
 // Middlewares
@@ -31,7 +31,6 @@ app.post('/ussd',async(req,res)=>{
 
  //create response 
  let  response = "";
- let data = "";
 
  //first request 
  if(text == ""){
@@ -50,7 +49,8 @@ app.post('/ussd',async(req,res)=>{
    response = `END updated`; 
  }
  else if(text == "3"){
-   response = `END viewed`; 
+   const result = await getRecord();
+   response = `END viewed ${result.length}`; 
  }
  else if(text == "4"){
    response = `END deleted`; 
@@ -74,6 +74,24 @@ async function createRecord(phoneNumber) {
  
      // Return success message
      return `Your record with phone number ${phoneNumber} added successfully with ID ${docRef.id}`;
+   } catch (err) {
+     // Log error and return failure message
+     console.error("Error adding document:", err);
+     return `Error adding record: ${err.message}`;
+   }
+ }
+async function getRecord(phoneNumber) {
+   // Retrieve data from  firestore
+   try {
+     // Add document to Firestore collection
+     let data = [];
+     onSnapshot(collectionRef,(doc)=>{
+       doc.docs.forEach((doc)=>{
+          data.push({...doc.data(), id:doc.id})
+       })
+     });
+     // Return success message
+     return data;
    } catch (err) {
      // Log error and return failure message
      console.error("Error adding document:", err);
