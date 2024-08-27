@@ -20,7 +20,7 @@ const collectionRef = collection(fireStoreDb,"USSD");
 
 // Routes
 app.use("/home", home);
-app.post('/ussd',(req,res)=>{
+app.post('/ussd',async(req,res)=>{
 // we get this from  users phone
  const {
     serviceCode,
@@ -43,7 +43,7 @@ app.post('/ussd',(req,res)=>{
  }
  else if(text == "1"){
    //check  first level   
-   const data = createRecord(phoneNumber);
+   const data = await createRecord(phoneNumber);
    response = `END ${data}`; 
  }
  else if(text == "2"){
@@ -59,15 +59,28 @@ app.post('/ussd',(req,res)=>{
  res.set('content-type:text/plain');
  res.send(response);
 });
-function createRecord(phoneNumber){
-//we will add our data here
- addDoc(collectionRef,phoneNumber).then((result)=>{
-   res.status(200).json("data saved");
-  }).catch((err)=>{
-   res.status(500).json(err);
-  })
-return response = ` your record with phone number ${phoneNumber} added successfully`;
-}
+async function createRecord(phoneNumber) {
+   // Data to be added to Firestore
+   const data = {
+     firstName: "James",
+     lastName: "Maina",
+     mobile: phoneNumber,
+     amount: "0.00"
+   };
+ 
+   try {
+     // Add document to Firestore collection
+     const docRef = await addDoc(collectionRef, data);
+ 
+     // Return success message
+     return `Your record with phone number ${phoneNumber} added successfully with ID ${docRef.id}`;
+   } catch (err) {
+     // Log error and return failure message
+     console.error("Error adding document:", err);
+     return `Error adding record: ${err.message}`;
+   }
+ }
+ 
 app.post('/create',(req,res)=>{
   addDoc(collectionRef,req.body).then((result)=>{
    res.status(200).json("data saved");
