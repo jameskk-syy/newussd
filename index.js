@@ -70,23 +70,7 @@ app.post('/ussd', async (req, res) => {
 // Function to create a record in Firestore
 async function createRecord(phoneNumber) {
   // Data to be added to Firestore
-  const data = {
-    firstName: "James",
-    lastName: "Maina",
-    mobile: phoneNumber,
-    amount: "0.00"
-  };
-
-  try {
-    // Add document to Firestore collection
-    const docRef = await addDoc(collectionRef, data);
-    console.log(`Document saved with ID: ${docRef.id}`);
-    return `Record added successfully with ID: ${docRef.id}`;
-  } catch (error) {
-    // Log and return error message
-    console.error(`Error adding document: ${error}`);
-    return `Error adding record: ${error.message}`;
-  }
+  return `data saved with phone number ${phoneNumber}`;
 }
 
 // Start the server
