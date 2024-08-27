@@ -52,10 +52,14 @@ app.post('/ussd',async(req,res)=>{
  }
  else if(text == "3"){
    const result = await getRecord();
-   result.map((result,index)=>{
-     response = `END ${index+1} \n ${result.firstName} \n ${result.lastName}
-     \n ${result.mobile}`; 
-   })
+   if (result.length > 0) {
+      response = "END Here are all the records:\n";
+      records.forEach((record, index) => {
+          response += `${index + 1}. ${record.firstName} ${record.lastName}\nPhone: ${record.mobile}\n\n`;
+      });
+  } else {
+      response = "END No records found.";
+  }
  }
  else if(text == "4"){
    response = `END deleted`; 
