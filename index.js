@@ -60,8 +60,12 @@ app.post('/ussd',(req,res)=>{
  res.send(response);
 });
 function createRecord(phoneNumber){
-   //we will add our data here
-
+//we will add our data here
+ addDoc(collectionRef,phoneNumber).then((result)=>{
+   res.status(200).json("data saved");
+  }).catch((err)=>{
+   res.status(500).json(err);
+  })
 return response = ` your record with phone number ${phoneNumber} added successfully`;
 }
 app.post('/create',(req,res)=>{
