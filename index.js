@@ -54,7 +54,7 @@ app.post('/ussd',async(req,res)=>{
    const result = await getRecord();
    if (result.length > 0) {
       response = "END Here are all the records:\n";
-      records.forEach((record, index) => {
+   result.forEach((record, index) => {
           response += `${index + 1}. ${record.firstName} ${record.lastName}\nPhone: ${record.mobile}\n\n`;
       });
   } else {
