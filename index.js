@@ -2,7 +2,7 @@
 const express = require("express");
 const bodyParser =  require('body-parser');
 const firebaseApp = require('./config');
-const {getFirestore,collection} = require('firebase/firestore');
+const {getFirestore,collection,addDoc} = require('firebase/firestore');
 const home = require("./routes/home");
 
 // Middlewares
@@ -18,7 +18,6 @@ const fireStoreDb = getFirestore(app);
 
 const collectionRef = collection(fireStoreDb,"USSD");
 
-
 // Routes
 app.use("/home", home);
 app.post('/ussd',(req,res)=>{
@@ -32,33 +31,58 @@ app.post('/ussd',(req,res)=>{
 
  //create response 
  let  response = "";
+ let data = "";
 
  //first request 
  if(text == ""){
     response = `CON What do you  like to  check
-    1 Account Number
-    2 Account Information`;
+    1 Create Record
+    2 Update Record
+    3 Read Record
+    4 Delete Account`;
  }
  else if(text == "1"){
-    // check  first level 
-    const accountNumber = "0796598108"
-    response = `END Your account number is ${accountNumber} and ${serviceCode}`;
+   //check  first level 
+   data = createRecord();
+   response = `END ${data}`
+   
  }
  else if(text == "2"){
-    response = `CON What do  you like to  check  on  your account
-    1 Phone Number
-    2 Account Balance`;
  }
- else if(text == "2*1"){
-    response =`END Your phone number is ${phoneNumber}`
+ else if(text == "3"){
  }
- else if(text == "2*2"){
-    const accountBalance = "1000000"
-    response =`END Your account balance is ${accountBalance}`
+ else if(text == "4"){
+
  }
  res.set('content-type:text/plain');
  res.send(response);
 });
+function createRecord(){
+   //we will add our data here
+   const data = {
+      firstName: "James",
+      lastName:"Maina",
+      mobile:phoneNumber,
+      amount:"0.00"
+   }
+   addDoc(collectionRef,data).then((result) =>
+      {console.log(`Your record is saved successfully with ID ${result.id}`);
+
+      }).catch((err)=>{
+         console.log(`Error ${err}`);
+      })
+return `END your record added successfully`;
+}
+function updateRecord(){
+   response = `END Your record is updated successfully`;
+}
+function readRecord(){
+ 
+}
+function deleteRecord(){
+   response = `END Your record is deleted successfully`;
+}
+
 // connection
 const port = process.env.PORT || 9001;
 app.listen(port, () => console.log(`Listening to port ${port}`));
