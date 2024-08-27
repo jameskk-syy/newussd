@@ -2,14 +2,16 @@
 const express = require("express");
 const bodyParser =  require('body-parser');
 const firebaseApp = require('./config');
-const {getFirestore,collection,addDoc,onSnapshot} = require('firebase/firestore');
+const {getFirestore,collection,addDoc,onSnapshot, getDocs} = require('firebase/firestore');
 const home = require("./routes/home");
+const cors = require('cors');
 
 // Middlewares
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.json());
+// app.use(cors);
 
 // establish  firestore  connection
 const fireStoreDb = getFirestore(app);
@@ -85,11 +87,10 @@ async function getRecord(phoneNumber) {
    try {
      // Add document to Firestore collection
      let data = [];
-     onSnapshot(collectionRef,(doc)=>{
-       doc.docs.forEach((doc)=>{
-          data.push({...doc.data(), id:doc.id})
-       })
-     });
+     const result = await getDocs(collectionRef);
+     result.docs.forEach((doc)=>{
+      data.push({...doc.data(), id:doc.id})
+     })
      // Return success message
      return data;
    } catch (err) {
@@ -99,12 +100,15 @@ async function getRecord(phoneNumber) {
    }
  }
  
-app.post('/create',(req,res)=>{
-  addDoc(collectionRef,req.body).then((result)=>{
-   res.status(200).json("data saved");
-  }).catch((err)=>{
-   res.status(500).json(err);
-  })
+app.get('/create',async(req,res)=>{
+   try {
+      const data = await getRecord();
+      res.status(200).send(data);
+   } catch (error) {
+      res.status(500).send(error);
+       
+   }
+ 
 })
 
 
